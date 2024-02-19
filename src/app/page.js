@@ -4,12 +4,13 @@ import { Bookmark, IosShare, Send } from "@mui/icons-material";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 export default function Home() {
 
-  const { ref, inView } = useInView()
+  const { ref, inView } = useInView();
+  const [isOpen, setIsOpen] = useState(null);
 
   const getTodos = async ({ pageParam }) => {
     const response = await axios.get(`https://jsonplaceholder.typicode.com/photos?_page=${pageParam}&_limit=30`);
@@ -35,31 +36,37 @@ export default function Home() {
   return (
     <main className="container mx-auto">
       <div className="p-5">
-        <p className='mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white text-center'>Inews</p>
+        <p className='mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-4xl dark:text-white text-center'>U-News</p>
         {
           todoList?.pages?.map((todo, index) => {
             return (
               todo?.map((item, i) => {
                 return (
-                  <div key={i} ref={ref} className="border border-zinc-500 mb-3 rounded-md">
+                  <div key={i} ref={ref} className="border border-zinc-500 mb-3 rounded-md relative overflow-hidden">
                     <div className="p-3 w-full mx-auto md:flex md:items-center md:gap-4">
-                      <Image src={item?.url} alt="" priority height={0} width={0} className="w-full h-[305px] object-cover mb-4 rounded-md md:mb-0" sizes='100vw' />
+                      <Image src={item?.url} alt="" priority height={0} width={0} className="w-full h-[305px] object-cover mb-4 rounded-md md:mb-0" sizes='100vw' onClick={() => setIsOpen(isOpen == item?.id ? null : item?.id)}/>
                       <div className="md:flex md:flex-col md:justify-between md:h-[305px]">
                         <div>
                           <h1 className='text-wrap text-2xl mb-4' style={{ textDecoration: item?.completed && 'line-through', color: item?.completed && '#5f5f5f' }}>{`${item.title}`}</h1>
-                          <p className="text-[.9rem] font-light text-[#dadada] opacity-90 mb-3">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem.</p>
+                          <p className="text-[.9rem] font-light text-[#dadada] opacity-90 mb-3" onClick={() => setIsOpen(isOpen == item?.id ? null : item?.id)}>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem.</p>
                         </div>
                         <a className="text- pb-4 text-blue-500" href="https://youtube.com" target="_blank">Read More At News18.in</a>
                       </div>
                     </div>
                     <div className="h-[55px] bg-gradient-to-r from-cyan-500 to-blue-500 rounded-b-[0.375rem] md:hidden">
+                      <div className="flex h-full flex-col items-start justify-around px-2">
+                        <p className="text-[16px]">1st ever auction took place on Feb 20, 2008</p>
+                        <a className="text-[14px]">Tap To Read More</a>
+                      </div>
+                    </div>
+                    <div className="h-[55px] bg-gradient-to-r from-red-500 to-orange-500 rounded-b-[0.375rem] md:hidden absolute right-0 w-full" style={{ bottom: isOpen == item?.id ? '0px' : '-55px', transition: 'all 0.3s ease-in-out' }}>
                       <div className="flex h-full items-center justify-evenly">
                         <div className="text-center">
                           <IosShare />
                           <p>Share</p>
                         </div>
                         <div className="text-center">
-                          <Bookmark/>
+                          <Bookmark />
                           <p>Bookmark</p>
                         </div>
                       </div>
